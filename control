@@ -1,0 +1,9 @@
+Package: com.modernos.tweak
+Name: ModernOS
+Version: 1.2.0
+Architecture: iphoneos-arm
+Description: Unified modern iOS experience for iPhone 4S (iOS 9.3.6): Control Center, lock screen, widget dashboard, grouped notifications and app switcher in one tweak, with crash-loop safe mode.
+Maintainer: ModernOS
+Author: ModernOS
+Section: Tweaks
+Depends: mobilesubstrate (>= 0.9.5000), preferenceloader, firmware (>= 9.0), firmware (<< 10.0)

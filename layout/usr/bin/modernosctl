@@ -1,0 +1,44 @@
+#!/bin/sh
+# modernosctl — inspect and recover ModernOS without any ModernOS UI.
+# Works over SSH or MobileTerminal. Never restarts SpringBoard by itself.
+DIR=/var/mobile/Library/ModernOS
+STATE="$DIR/crashguard.state"
+FLAG="$DIR/DISABLE"
+PREFS=/var/mobile/Library/Preferences/com.modernos.prefs.plist
+
+ensure_dir() {
+    mkdir -p "$DIR" && chown mobile:mobile "$DIR" 2>/dev/null
+}
+
+case "$1" in
+    status)
+        if [ -e "$FLAG" ]; then echo "Emergency disable: ON ($FLAG exists)"; else echo "Emergency disable: off"; fi
+        if [ -f "$STATE" ]; then
+            echo "--- $STATE"
+            cat "$STATE"
+        else
+            echo "No crash guard state (fresh, or reset)."
+        fi
+        [ -f "$STATE.corrupt" ] && echo "Note: an unreadable earlier state was saved as $STATE.corrupt"
+        ;;
+    disable)
+        ensure_dir && touch "$FLAG" && echo "ModernOS will not load from the next SpringBoard launch on."
+        echo "Respring now to return to the stock interface:  killall -9 SpringBoard"
+        ;;
+    enable)
+        rm -f "$FLAG" && echo "Emergency disable removed (safe mode, if any, is unchanged; see 'reset')."
+        ;;
+    reset)
+        rm -f "$STATE" "$STATE.tmp" && echo "Crash guard reset: counters cleared and safe mode left."
+        echo "ModernOS loads again at the next respring (unless the DISABLE file exists)."
+        ;;
+    *)
+        echo "usage: modernosctl status|disable|enable|reset"
+        echo "  status   show emergency flag and crash guard state"
+        echo "  disable  emergency disable (creates $FLAG)"
+        echo "  enable   remove the emergency disable file"
+        echo "  reset    clear crash counters and safe mode (deletes $STATE)"
+        echo "Changes apply at the next respring:  killall -9 SpringBoard"
+        exit 1
+        ;;
+esac

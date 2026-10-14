@@ -1,0 +1,8 @@
+#!/bin/sh
+# Creates the crash-guard directory, writable by SpringBoard (user mobile).
+mkdir -p /var/mobile/Library/ModernOS
+chown mobile:mobile /var/mobile/Library/ModernOS
+chmod 755 /var/mobile/Library/ModernOS
+echo "ModernOS installed. Respring to activate (killall -9 SpringBoard)."
+echo "Emergency disable: modernosctl disable   (or: touch /var/mobile/Library/ModernOS/DISABLE)"
+exit 0
